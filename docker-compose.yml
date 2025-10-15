@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.31-latest
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./infra/certs:/certs
+    ports:
+      - "8443:8443"
+    depends_on:
+      - ext_authz
+      - backend
+
+  ext_authz:
+    build: ./ext_authz
+    ports:
+      - "5000:5000"
+
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
